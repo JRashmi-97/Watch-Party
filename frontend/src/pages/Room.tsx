@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import ReactPlayer from 'react-player';
 
-let socket: Socket;
+
 
 interface Participant {
   id: string;
