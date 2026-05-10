@@ -9,12 +9,14 @@ A real-time, synchronized YouTube watch party system built with a modern React f
     *   **Moderator**: Can control playback and change videos.
     *   **Participant**: Watch-only mode. Controls are disabled to prevent accidental disruption.
 *   **Host Auto-Transfer**: If the host leaves, the oldest remaining participant is automatically promoted to Host.
-*   **Object-Oriented Backend**: Clean separation of `RoomManager`, `Room`, and `Participant` classes.
+*   **Smart YouTube URL Parser**: Simply paste any YouTube link, and the system intelligently extracts the video ID to start the party.
+*   **Resilient Connectivity**: Features a 5-second reconnection buffer to retain your role and sync state seamlessly if you accidentally refresh the page.
+*   **Mobile-Responsive UI**: Fully optimized layout that looks and works great across desktop and mobile devices.
 
 ## 🚀 Tech Stack
 *   **Frontend**: React, TypeScript, Vite, TailwindCSS v4, React-Player (YouTube IFrame API).
 *   **Backend**: Node.js, Express, TypeScript, Socket.IO.
-*   **Database**: In-memory state for lightning-fast WebSocket syncing (ideal for MVP).
+*   **Database**: SQLite for lightweight, reliable persistent storage of rooms and participants, enabling robust reconnections.
 
 ## 💻 Running Locally
 
@@ -53,4 +55,4 @@ To deploy this project so it's accessible via a public URL, follow these steps:
 4. Click **Deploy**.
 
 ## 🧠 Code Highlights
-The WebSocket logic is highly optimized to prevent "infinite loop" events (e.g., a client receives a play event from the server, triggers a local play, which triggers another play event back to the server). Instead of using laggy timeouts (`setTimeout`), the frontend explicitly validates the local `isPlaying` state and current timeline `onProgress` before emitting any redundant Socket events. This ensures buttery smooth, lag-free synchronization.
+The WebSocket logic is highly optimized to prevent "infinite loop" events. Instead of using laggy timeouts (`setTimeout`), the frontend explicitly validates the local `isPlaying` state and current timeline `onProgress` before emitting any redundant Socket events. Combined with the absolute-positioned video container that prevents layout collapse and robust server-side role management, this ensures buttery smooth, lag-free synchronization.
