@@ -2,12 +2,9 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { initDb } from './db';
 import { RoomManager } from './models/RoomManager';
 import { Participant, Role } from './models/Participant';
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
