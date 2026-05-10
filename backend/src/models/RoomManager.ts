@@ -1,5 +1,4 @@
 import { Room } from './Room';
-import { getDb } from '../db';
 
 export class RoomManager {
   public rooms: Map<string, Room> = new Map();
