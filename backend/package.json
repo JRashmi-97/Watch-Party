@@ -11,12 +11,14 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "sql.js": "^1.14.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.11",
+    "@types/sql.js": "^1.4.11",
     "ts-node": "^10.9.2",
     "tsx": "^4.10.2",
     "typescript": "^5.4.5"

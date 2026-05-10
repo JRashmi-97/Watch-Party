@@ -1,4 +1,5 @@
 import { Participant } from './Participant';
+import { getDb } from '../db';
 
 export interface VideoState {
   videoId: string;
@@ -22,7 +23,7 @@ export class Room {
   public addParticipant(participant: Participant) {
     this.participants.set(participant.id, participant);
     participant.socket.join(this.id);
-    
+
     // Broadcast to others in the room
     participant.socket.to(this.id).emit('user_joined', {
       participant: participant.toJSON(),
@@ -36,6 +37,16 @@ export class Room {
       room: this.id,
       isLocked: this.isLocked
     });
+
+    // Persist to SQLite
+    try {
+      getDb().run(
+        'INSERT OR REPLACE INTO participants (id, roomId, username, role) VALUES (?, ?, ?, ?)',
+        [participant.id, this.id, participant.username, participant.role]
+      );
+    } catch (err) {
+      console.error('DB Error (addParticipant):', err);
+    }
   }
 
   public removeParticipant(participantId: string) {
@@ -43,24 +54,31 @@ export class Room {
     if (participant) {
       participant.socket.leave(this.id);
       this.participants.delete(participantId);
-      
+
       participant.socket.to(this.id).emit('user_left', {
         userId: participantId,
         participants: this.getParticipantsList()
       });
-      
+
+      // Remove from SQLite
+      try {
+        getDb().run('DELETE FROM participants WHERE id = ?', [participantId]);
+      } catch (err) {
+        console.error('DB Error (removeParticipant):', err);
+      }
+
       // Auto-transfer host if the Host leaves
       if (participant.role === 'Host' && this.participants.size > 0) {
         const nextHost = Array.from(this.participants.values())[0];
         nextHost.role = 'Host';
-        
+
         const updatePayload = {
           userId: nextHost.id,
           username: nextHost.username,
           role: 'Host',
           participants: this.getParticipantsList()
         };
-        
+
         nextHost.socket.to(this.id).emit('role_assigned', updatePayload);
         nextHost.socket.emit('role_assigned', updatePayload);
       }
